@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 14px; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>GNY Practice Set 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a contest packet cover - clock and scoreboard strip on top, the problem sheet below, build notes last */
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --fg: #17191d; --muted: #5d636e; --line: #dde1e7; --accent: #1c5cab; --chip: #eef1f5;
+  --ok: #0c8a0c; --okbg: #e3f4e3; --warn: #b4580b;
+  --r-gray: #8a8f98; --r-green: #2f9e44; --r-cyan: #0fa3a3; --r-blue: #3b6fd8; --r-violet: #a23ad0; --r-orange: #f08c00; --r-red: #e03131;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121417; --panel: #1a1d21; --fg: #e9ecf0; --muted: #9aa1ac; --line: #2c3138; --accent: #86b6ef; --chip: #23272d;
+  --ok: #5fd35f; --okbg: #183018; --warn: #f0a050; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121417; --panel: #1a1d21; --fg: #e9ecf0; --muted: #9aa1ac; --line: #2c3138; --accent: #86b6ef; --chip: #23272d;
+  --ok: #5fd35f; --okbg: #183018; --warn: #f0a050; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 24px; }
+h1, h2 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(28px, 4.4vw, 40px); font-weight: 700; line-height: 1.1; }
+h2 { font-size: 20px; font-weight: 600; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 10px; }
+header p { margin: 0; color: var(--muted); max-width: 74ch; }
+a { color: var(--accent); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px; min-width: 0; }
+.clock { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; }
+.time { font-family: var(--mono); font-size: clamp(34px, 7vw, 48px); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+.time.over { color: var(--warn); }
+.stat { display: grid; gap: 2px; }
+.stat b { font-family: var(--mono); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--muted); }
+.ctrls { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+button { font: inherit; font-size: 13px; border-radius: 6px; padding: 7px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--fg); }
+button.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[disabled] { opacity: 0.45; cursor: default; }
+.confirm { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sheet { display: grid; gap: 10px; }
+.prob { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 6px 16px; align-items: start; }
+.prob.solved { border-color: var(--ok); }
+.letter { font-family: var(--display); font-size: 30px; font-weight: 700; line-height: 1; text-align: center; padding-top: 2px; }
+.prob.solved .letter { color: var(--ok); }
+.ptitle { font-weight: 600; font-size: 16px; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; margin-top: 2px; }
+.judge { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.judge .tries { font-family: var(--mono); font-size: 13px; color: var(--muted); min-width: 5.5em; text-align: right; font-variant-numeric: tabular-nums; }
+.badge { font-family: var(--mono); font-size: 12px; background: var(--okbg); color: var(--ok); border-radius: 4px; padding: 3px 8px; font-weight: 600; }
+.prob details { grid-column: 2 / -1; font-size: 14px; }
+.prob summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.spoil { margin-top: 10px; display: grid; gap: 8px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 13px; color: var(--muted); }
+.rate { font-family: var(--mono); color: var(--fg); font-weight: 500; display: inline-flex; gap: 6px; align-items: center; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.chip { font-size: 12px; background: var(--chip); color: var(--fg); border-radius: 4px; padding: 2px 7px; }
+.spoil dl { margin: 0; display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 6px 12px; }
+.spoil dt { color: var(--muted); font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 3px; }
+.spoil dd { margin: 0; }
+.spoil ol, .spoil ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+@media (max-width: 640px) {
+  .prob { grid-template-columns: 34px minmax(0, 1fr); }
+  .letter { font-size: 24px; }
+  .judge { grid-column: 2; justify-content: flex-start; }
+  .judge .tries { text-align: left; min-width: 0; }
+  .spoil dl { grid-template-columns: minmax(0, 1fr); }
+  .ctrls { margin-left: 0; }
+}
+.build { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 20px; }
+.build h3 { font-family: var(--display); font-size: 15px; margin: 0 0 8px; }
+.build p, .build ul { margin: 0; font-size: 14px; color: var(--muted); }
+.build ul { padding-left: 18px; display: grid; gap: 4px; }
+.scroll { overflow-x: auto; }
+table.ratio { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+.ratio th, .ratio td { padding: 5px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+.ratio th:first-child, .ratio td:first-child { text-align: left; }
+.ratio th { font-family: var(--mono); font-weight: 500; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.ratio td { font-family: var(--mono); }
+.ratio td:first-child { font-family: var(--body); }
+.note { font-size: 13px; color: var(--muted); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Greater New York Regional · practice contest · 5 hours</div>
+    <h1>GNY Practice Set 1</h1>
+    <p>Eleven past GNY problems (2016–2025, excluding 2023), chosen so the difficulty curve and category mix match an average GNY regional. Problem letters are shuffled, like a real GNY set, so the letter order says nothing about difficulty. Difficulty, category and solutions are hidden under each problem until you reveal them.</p>
+  </header>
+
+  <section class="panel clock" aria-label="Contest clock">
+    <div class="time" id="time" aria-live="off">5:00:00</div>
+    <div class="stat"><b id="nSolved">0</b><span>solved</span></div>
+    <div class="stat"><b id="pen">0</b><span>penalty minutes</span></div>
+    <div class="ctrls">
+      <button type="button" class="primary" id="startBtn">Start contest</button>
+      <button type="button" id="pauseBtn" disabled>Pause</button>
+      <button type="button" id="revealAll">Reveal all spoilers</button>
+      <button type="button" id="resetBtn">Reset</button>
+    </div>
+    <div class="confirm" id="confirm" hidden><span>Clear the clock and all results?</span><button type="button" id="yesReset">Clear</button><button type="button" id="noReset">Keep</button></div>
+  </section>
+
+  <section class="sheet" id="sheet" aria-label="Problems"></section>
+
+  <section class="panel" style="display:grid;gap:16px">
+    <h2>How this set was built</h2>
+    <div class="build">
+      <div>
+        <h3>Difficulty (estimated Codeforces rating)</h3>
+        <div class="scroll"><table class="ratio" id="tBand"></table></div>
+      </div>
+      <div>
+        <h3>Primary category</h3>
+        <div class="scroll"><table class="ratio" id="tCat"></table></div>
+      </div>
+      <div>
+        <h3>Selection rules</h3>
+        <ul>
+          <li>Size: 11 problems, the historical average (10–15 per year).</li>
+          <li>Per contest, each rating band and category count is the 2016–2025 average share (2023 excluded), rounded to 11 slots.</li>
+          <li>Exactly one problem that no GNY team solved; past contests averaged about one.</li>
+          <li>At most two problems from any one year; no near-duplicates (the two Collatz and two unicycle problems).</li>
+          <li>Excluded: 2021 I (same as 2023 E); 2021 H and 2022 H (statement and judges' code disagree).</li>
+          <li>Every write-up was checked against the judges' code (high confidence).</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">Judging: four problems are on Kattis and can be submitted there. For the rest, compare your output against the judges' secret data linked on each problem (diff the files; problems with real-number output accept small differences). Ratings are estimates on the Codeforces scale; problems, statements and data are from the ICPC Greater New York Regional archive at acmgnyr.org (CC BY-NC-SA 3.0).</p>
+  </section>
+</div>
+
+<script>
+const P = [{"letter": "A", "year": 2024, "orig": "I", "title": "Oooh I See", "pdf": "http://acmgnyr.org/year2024/problems/I-Ooohisee/I-Ooohisee.pdf", "data": "http://acmgnyr.org/year2024/problems/I-Ooohisee/secret/", "kattis": null, "rating": 800, "tags": ["implementation"], "solved": 75, "teams": 83, "idea": "Scan every interior cell. A treasure is a '0' (digit) whose 8 neighbors are all 'O' (letter). Count them and remember the position. O(rc).", "steps": ["Read r, c and the grid.", "For i in 1..r-2, j in 1..c-2: if grid[i][j]=='0' and all 8 neighbors are 'O', count it and record (i+1, j+1).", "count == 0 -> 'Oh no!'; count > 1 -> 'Oh no! N locations'; else print the row and column (1-based)."], "pitfalls": ["Border cells can't qualify (they lack 8 neighbors); don't index out of range.", "Don't mix up the letter O and the digit 0.", "Exact output strings, including the '!' and the word 'locations'."], "tpl": []}, {"letter": "B", "year": 2017, "orig": "D", "title": "Pavers", "pdf": "http://acmgnyr.org/year2017/problems/D-Pavers.pdf", "data": "http://acmgnyr.org/year2017/data/d.in", "kattis": "pavers", "rating": 1600, "tags": ["dp", "combinatorics"], "solved": 12, "teams": 61, "idea": "Column-by-column profile DP on a 2xn strip. The state is a 2-bit mask of cells in the current column already covered by pieces sticking out of the previous column. Along with the tiling count, carry the total number of squares, dominoes and trominoes summed over all tilings. Placing a piece of type t adds the current count to that type's total. O(n) with 4 states.", "steps": ["dp[mask] = (cnt, sq, dom, tri), start dp[0] = (1,0,0,0)", "For each column, fill uncovered cells by enumerating placements: square, vertical domino, horizontal domino into next column, L-tromino (2 cells here + 1 next, or 1 here + 2 next)", "Transition: new.cnt += cnt; new.type_total += old.type_total + (pieces of type added) * cnt", "Answer is dp[0] after column n; precompute for all n once"], "pitfalls": ["Do not let pieces stick out past column n", "Outputs fit unsigned 32-bit by statement; accumulate in 64-bit", "Verified with my own implementation: n=1 gives 2 2 1 0, n=2 gives 11 16 8 4 (judge solution file was not available)"], "tpl": ["Profile & path DP"]}, {"letter": "C", "year": 2016, "orig": "D", "title": "A Rational Sequence (Take 3)", "pdf": "http://acmgnyr.org/year2016/problems/D-RationalSequence.pdf", "data": "http://acmgnyr.org/year2016/data/d.in", "kattis": "rationalsequence3", "rating": 1000, "tags": ["math", "trees"], "solved": 40, "teams": 48, "idea": "This is the Calkin-Wilf tree in BFS order. Node n's path from the root is given by the binary digits of n after the leading 1: 0 = left child p/(p+q), 1 = right child (p+q)/q. O(log n).", "steps": ["Read N (up to 2^31-1, use unsigned/64-bit)", "Start p = q = 1; find the highest set bit of N", "For each lower bit from high to low: if 0 then q = p+q else p = p+q", "Print p/q"], "pitfalls": ["N up to 2147483647: read into 64-bit or unsigned", "Numerators/denominators can reach ~4e9 (unsigned 32-bit); use 64-bit", "Checked on sample: 11 = 1011b gives 1/1 -> 1/2 -> 3/2 -> 5/2"], "tpl": []}, {"letter": "D", "year": 2022, "orig": "G", "title": "Linked Triangles", "pdf": "http://acmgnyr.org/year2022/problems/G-TriLink/G-TriLink.pdf", "data": "http://acmgnyr.org/year2022/problems/G-TriLink/secret/", "kattis": null, "rating": 2000, "tags": ["geometry"], "solved": 6, "teams": 78, "idea": "There are only 10 splits (point 1 plus a pair {m,n}). For triangle T = (1,m,n), take the other three points. If all are strictly on one side of T's plane, they are not linked. Otherwise one point s is alone on one side, and its two edges to the other points cross the plane. Compute both crossing points. The triangles are linked iff exactly one of these crossing points lies inside T (the third edge does not cross the plane). O(1).", "steps": ["Read 6 points.", "For each 2 <= m < n <= 6: normal = (Pm-P1) x (Pn-P1); sign of (Pk-P1).normal for the 3 other points.", "If the signs are all equal, skip; else find the lone point s and the two others u, v.", "Intersection of segment s-u with the plane: s + (u-s) * ds/(ds-du) using signed distances; same for s-v.", "Point-in-triangle test (barycentric or same-side cross products) for each; linked iff exactly one is inside.", "Print the count, then the 'm n' pairs in increasing lexicographic order."], "pitfalls": ["Points are in general position, so no epsilon cases are expected, but use a small epsilon in the plane tests anyway.", "Output indices are 1-based, with point 1 always in the first triangle.", "Loop m < n in lexicographic order so the output is already sorted."], "tpl": ["3D geometry"]}, {"letter": "E", "year": 2022, "orig": "J", "title": "PSET", "pdf": "http://acmgnyr.org/year2022/problems/J-PSet/J-PSet.pdf", "data": "http://acmgnyr.org/year2022/problems/J-PSet/secret/", "kattis": null, "rating": 1200, "tags": ["brute force", "implementation"], "solved": 38, "teams": 78, "idea": "Encode each feature as 0..2. A PSET card's bottom equals 2 - top in each feature (both form a SET with 2GSD = (1,1,1,1)), so if the tops of three cards form a SET (each feature sum = 0 mod 3), the bottoms automatically do too. Flipping a card swaps top and bottom. For each of the C(20,3) triples, fix card 1's orientation, try the 4 flip combinations of cards 2 and 3, and count the triple once if any combination works.", "steps": ["Map count 1/2/3 to 0/1/2, color R/G/B, fill E/S/F and shape A/D/O to 0..2.", "Store top and bottom vectors for each card.", "For i<j<k: if any of (t_i,t_j,t_k), (t_i,b_j,t_k), (t_i,t_j,b_k), (t_i,b_j,b_k) has every feature sum divisible by 3, count++.", "Print count."], "pitfalls": ["Count each triple once even if several flip combinations work.", "Flipping all three cards is equivalent to flipping none, so fixing card 1 loses nothing.", "Parse the 4-character codes carefully (count digit first)."], "tpl": []}, {"letter": "F", "year": 2018, "orig": "B", "title": "Moving Buildings", "pdf": "http://acmgnyr.org/year2018/problems/B-MoveBuildings.pdf", "data": "http://acmgnyr.org/year2018/data/b.in", "kattis": null, "rating": 2600, "tags": ["math", "constructive"], "solved": 0, "teams": 70, "idea": "This is a 4-peg colored Tower of Hanoi variant (Stockmeyer-Lunnon 'turtle'). The optimal swap uses 3(2^N - 1) moves. The schedule is: the first and last moves shift the white top floor 1->2 and 2->3. Pass 1 (i = 1..N-1, alternating color stacks): move floor i, an ordinary Hanoi of floors 1..i-1, move floor i+1, a Hanoi of floors 1..i. Then the middle move of floor N, and pass 2 mirrors pass 1 in reverse. Locate move S by skipping whole blocks using known block lengths (Hanoi of k floors = 2^k - 1, pass-1 block i = 3*2^(i-1)), then recurse into the standard Hanoi to find the exact move. O(N).", "steps": ["Precompute HanoiCnt[k] = 2^k - 1 and block sizes for both passes; total = 3(2^N - 1)", "Walk the Turtle procedure (see judge comment): stack color toggles each step; lots are 2*stack, 2*stack+1, 2*stack+2 (mod 4) for (from, via, to) roles", "Subtract block lengths from S until S falls inside a single move or a Hanoi block", "Inside Hanoi(k, from, via, to): if S <= 2^(k-1)-1 recurse on (k-1, from, to, via); if S == 2^(k-1) it is the move of floor k from->to; else recurse on (k-1, via, from, to)", "Print K, total moves, 'MOVE color FLOOR FROM LOT f to LOT t' (note lowercase 'to' in the sample)"], "pitfalls": ["N = 25 gives a total of 100663293; S is a 32-bit positive integer, so use 64-bit/unsigned", "Output format follows the sample exactly (the statement says 'TO', the sample uses 'to')", "The hard part is deriving the optimal schedule; it comes from 'New Variations on the Tower of Hanoi' (Stockmeyer, Lunnon)", "The constraint pattern (white never on lot 4, black never on lot 2) makes each color's stack use a 3-lot window"], "tpl": []}, {"letter": "G", "year": 2017, "orig": "B", "title": "Sum Squared Digits Function", "pdf": "http://acmgnyr.org/year2017/problems/B-SumSquareDigits.pdf", "data": "http://acmgnyr.org/year2017/data/b.in", "kattis": "sumsquareddigits", "rating": 900, "tags": ["implementation", "math"], "solved": 46, "teams": 61, "idea": "Extract base-b digits by repeated mod/div and sum their squares. O(log n).", "steps": ["Read b and n (unsigned 32-bit)", "While n > 0: s += (n % b)^2; n /= b", "Print s"], "pitfalls": ["n fits unsigned 32-bit but not signed: use 64-bit or unsigned"], "tpl": []}, {"letter": "H", "year": 2021, "orig": "C", "title": "Checker Slide", "pdf": "http://acmgnyr.org/year2021/judge-data/C-CheckerSlide/C-CheckerSlide.pdf", "data": "http://acmgnyr.org/year2021/judge-data/C-CheckerSlide/judge/", "kattis": null, "rating": 1700, "tags": ["graphs", "search/backtracking", "implementation"], "solved": 13, "teams": 89, "idea": "There are only C(36,4) = 58905 sets of 4 unlabeled checkers. Run BFS from the start set: each state has at most 16 moves (checker x 4 directions, sliding until a wall or another checker). Store parent pointers, then reconstruct the path to the end set.", "steps": ["Encode a state as the 4 cell indices (row*6+col) sorted, packed base 36 (36^4 = 1.7M array entries is fine).", "BFS: for each checker and direction, slide while the next cell is on the board and empty; skip moves of length 0.", "Record parent state and the move (from row/col, to row/col) for each newly visited state.", "Stop when the sorted end state is reached; walk parents back and reverse.", "Print N, then each move as 'r1 c1 r2 c2'."], "pitfalls": ["Checkers are indistinguishable: compare sorted positions, not checker i to end checker i.", "A checker that is already blocked in a direction produces no move; do not count it.", "Several shortest paths may exist; the judge solution prints its BFS path, and I did not check whether a special checker accepts other optimal paths."], "tpl": ["BFS/DFS on state spaces"]}, {"letter": "I", "year": 2024, "orig": "B", "title": "Average Substring Value", "pdf": "http://acmgnyr.org/year2024/problems/B-Averagesubstringvalue/B-Averagesubstringvalue.pdf", "data": "http://acmgnyr.org/year2024/problems/B-Averagesubstringvalue/secret/", "kattis": null, "rating": 1200, "tags": ["math", "data structures"], "solved": 48, "teams": 83, "idea": "Sum of maxima over all substrings = sum over d=1..9 of (number of substrings whose max >= d). A substring has max < d iff it lies entirely inside a maximal run of digits < d, so count(max >= d) = n(n+1)/2 - sum over such runs of L(L+1)/2. That is O(9n). Then divide by n(n+1)/2 and print as a reduced mixed fraction.", "steps": ["Read s; n = length, T = n(n+1)/2.", "For d in 1..9: scan s, tracking the current run length of digits < d; add T - sum of L(L+1)/2 to S.", "g = gcd(S, T); a = S/g, b = T/g.", "If b == 1 print a; else if a < b print 'a/b'; else print 'q r/b' with q = a / b, r = a % b."], "pitfalls": ["T is about 2e10 and S up to 9T (about 1.8e11): needs 64-bit.", "Output formats: integer (including 0), proper fraction, or mixed number with a space."], "tpl": ["Number theory basics"]}, {"letter": "J", "year": 2016, "orig": "J", "title": "Smoothed Gardens", "pdf": "http://acmgnyr.org/year2016/problems/J-Gardens.pdf", "data": "http://acmgnyr.org/year2016/data/j.in", "kattis": "smoothedgardens", "rating": 2300, "tags": ["geometry", "math"], "solved": 2, "teams": 48, "idea": "Point P is on the outline when the perimeter of the convex hull of {A,B,C,P} equals L. Beyond edge XY this is an ellipse with foci X,Y (|PX|+|PY| = L - other two sides). Beyond vertex X (X inside the hull) it is an ellipse with foci at the other two vertices. The area can be summed analytically from six elliptic arcs. A simpler robust option: integrate in polar coordinates around the centroid, with area = integral of r(theta)^2/2. Find r(theta) by bisection on hull perimeter, which is monotone along a ray from an interior point.", "steps": ["G = centroid; for theta on a Simpson grid, bisect r in [0, L] so that hullPerimeter(A,B,C,G+r*dir) = L", "Hull perimeter of 4 points: if P is inside the triangle it is the triangle perimeter; else compute the convex hull of the 4 points", "Area = Simpson sum of r^2/2 over [0, 2*pi]", "Alternatively compute each of the 6 elliptic-sector areas in closed form for speed"], "pitfalls": ["Up to 10000 cases: brute polar Simpson with 2000 samples x 60 bisection steps is ~1e9 cheap ops. Reduce samples (the boundary is smooth, so a few hundred Simpson panels suffice for 2 decimals) or use the closed form", "L is the full loop length (it includes the triangle perimeter): sample 1 has perimeter 12, L = 13", "Cx can be negative or beyond Bx (obtuse triangles); the polar method handles it", "Verified: polar+bisection method reproduces all 3 sample outputs (23.49, 37.46, 42.24)"], "tpl": ["2D geometry core", "Numerical methods"]}, {"letter": "K", "year": 2020, "orig": "H", "title": "ICPC Standings", "pdf": "http://acmgnyr.org/year2020/judge-data/H-ICPCStandings/H-ICPCStandings.pdf", "data": "http://acmgnyr.org/year2020/judge-data/H-ICPCStandings/judge/", "kattis": null, "rating": 1400, "tags": ["implementation"], "solved": 15, "teams": 55, "idea": "Aggregate per (team, problem): count rejections before the first accept; the problem's time is accept time + 20*rejects. Record the order in which each team's problems were accepted. Sort teams by more solved, then smaller total time, then compare the times of their last-accepted problem, then second-to-last accepted, and so on (accept order is chronological, not sorted by time), then team number. Teams equal on all keys share a rank; a new rank equals 1 + its position in the sorted list. Print teams until the rank exceeds NR. O(NS + NT log NT * NP).", "steps": ["Read NT, NP, NS, NR and the submissions (already in time order).", "For each submission on an unsolved (T,P): if D=0, rejects++; if D=1, time[P] = t + 20*rejects, append P to the team's accept-order list, add to the total, solved++.", "Sort with the comparator: solved desc, total asc, then for k = solved-1 down to 0 compare time[order[k]] (smaller is better), then team number asc.", "Walk the sorted list: rank stays the same while the comparator (without the team-number step) says equal, otherwise rank = index+1; stop when the rank exceeds NR.", "Print each line as %-4d%-4d%3d%5d (rank, team, solved, total)."], "pitfalls": ["The tiebreak compares by order of acceptance (last problem accepted first), using that problem's time including penalty; it is not a sorted list of times.", "Tied teams print in team-number order and the next rank skips (1,1,3); a tie group that starts at rank <= NR is printed in full.", "Rejections after an accept add nothing. Statement says ignore t >= 300; the judge has no such check (input guarantees t < 300), so filtering is harmless.", "Judge quirk: it marks 'solved' by time != 0, so an accept at t=0 with no rejects could be counted twice on a second accept; test data presumably avoids this."], "tpl": ["Input/output helpers"]}];
+const RATIO = {"bands": [{"name": "800–1000", "avg": 2.7102564102564104, "target": 3, "got": 3}, {"name": "1100–1300", "avg": 1.8505698005698006, "target": 2, "got": 2}, {"name": "1400–1600", "avg": 2.195014245014245, "target": 2, "got": 2}, {"name": "1700–1900", "avg": 1.4806267806267805, "target": 1, "got": 1}, {"name": "2000–2200", "avg": 1.0995726495726497, "target": 1, "got": 1}, {"name": "2300+", "avg": 1.663960113960114, "target": 2, "got": 2}], "cats": [{"name": "Math / number theory / counting", "avg": 3.216381766381766, "target": 3, "got": 3}, {"name": "Implementation / strings / parsing", "avg": 2.9705128205128206, "target": 3, "got": 3}, {"name": "Geometry", "avg": 1.5148148148148146, "target": 2, "got": 2}, {"name": "Search / brute force", "avg": 1.4555555555555555, "target": 1, "got": 1}, {"name": "Graphs / data structures / other", "avg": 1.035754985754986, "target": 1, "got": 1}, {"name": "DP", "avg": 0.806980056980057, "target": 1, "got": 1}]};
+const RANKS = [[0,1199,"Newbie","--r-gray"],[1200,1399,"Pupil","--r-green"],[1400,1599,"Specialist","--r-cyan"],[1600,1899,"Expert","--r-blue"],[1900,2099,"Candidate Master","--r-violet"],[2100,2399,"Master","--r-orange"],[2400,9999,"Grandmaster+","--r-red"]];
+const rank = r => RANKS.find(k => r >= k[0] && r <= k[1]);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LEN = 5 * 3600 * 1000, KEY = "gny-practice-1";
+
+let st = { start: null, pausedAt: null, pausedTotal: 0, res: {}, open: {} };
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) st = Object.assign(st, s); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
+const elapsed = () => !st.start ? 0 : ((st.pausedAt || Date.now()) - st.start - st.pausedTotal);
+const fmt = ms => { const neg = ms < 0; ms = Math.abs(ms); const s = Math.floor(ms / 1000); return (neg ? "+" : "") + Math.floor(s / 3600) + ":" + String(Math.floor(s / 60) % 60).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+
+function sheet() {
+  document.getElementById("sheet").innerHTML = P.map(p => {
+    const r = st.res[p.letter] || { wrong: 0, at: null }, k = rank(p.rating), solved = r.at != null;
+    const judge = p.kattis ? `<a href="https://open.kattis.com/problems/${p.kattis}" target="_blank" rel="noopener">Submit on Kattis</a>` : `<a href="${p.data}" target="_blank" rel="noopener">Judges' test data</a>`;
+    return `<article class="prob${solved ? " solved" : ""}" id="p-${p.letter}">
+      <div class="letter">${p.letter}</div>
+      <div><div class="ptitle">${esc(p.title)}</div>
+        <div class="links"><a href="${p.pdf}" target="_blank" rel="noopener">Statement (PDF)</a>${judge}</div></div>
+      <div class="judge">
+        <span class="tries">${solved ? `<span class="badge">✓ ${r.at} min</span>` : (r.wrong ? `${r.wrong} wrong` : "")}</span>
+        ${solved ? `<button type="button" data-undo="${p.letter}">Undo</button>` : `<button type="button" data-wrong="${p.letter}" ${st.start ? "" : "disabled"}>+1 wrong</button><button type="button" data-ok="${p.letter}" ${st.start ? "" : "disabled"}>Solved</button>`}
+      </div>
+      <details data-l="${p.letter}"${st.open[p.letter] ? " open" : ""}><summary>Spoilers: difficulty, category, solution</summary>
+        <div class="spoil">
+          <div class="meta"><span class="rate"><span class="dot" style="background:var(${k[3]})"></span>${p.rating}</span><span>${k[2]}</span>${p.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("")}<span>Originally GNY ${p.year} ${p.orig} · solved by ${p.solved} of ${p.teams} teams</span></div>
+          <dl>
+            <dt>Key idea</dt><dd>${esc(p.idea)}</dd>
+            <dt>Implement</dt><dd><ol>${p.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></dd>
+            <dt>Pitfalls</dt><dd><ul>${p.pitfalls.map(s => `<li>${esc(s)}</li>`).join("")}</ul></dd>
+            ${p.tpl.length ? `<dt>Templates</dt><dd>${p.tpl.map(t => `<span class="chip">${esc(t)}</span>`).join(" ")}</dd>` : ""}
+          </dl>
+        </div>
+      </details>
+    </article>`;
+  }).join("");
+}
+function score() {
+  let n = 0, pen = 0;
+  for (const p of P) { const r = st.res[p.letter]; if (r && r.at != null) { n++; pen += r.at + 20 * r.wrong; } }
+  document.getElementById("nSolved").textContent = n + " / " + P.length;
+  document.getElementById("pen").textContent = pen;
+}
+function tick() {
+  const left = LEN - elapsed(), t = document.getElementById("time");
+  t.textContent = fmt(left); t.classList.toggle("over", left < 0);
+  const sb = document.getElementById("startBtn"), pb = document.getElementById("pauseBtn");
+  sb.hidden = !!st.start; pb.disabled = !st.start;
+  pb.textContent = st.pausedAt ? "Resume" : "Pause";
+}
+document.getElementById("startBtn").addEventListener("click", () => { st.start = Date.now(); st.pausedAt = null; st.pausedTotal = 0; save(); sheet(); tick(); });
+document.getElementById("pauseBtn").addEventListener("click", () => {
+  if (st.pausedAt) { st.pausedTotal += Date.now() - st.pausedAt; st.pausedAt = null; } else st.pausedAt = Date.now();
+  save(); tick();
+});
+document.getElementById("resetBtn").addEventListener("click", () => { document.getElementById("confirm").hidden = false; });
+document.getElementById("noReset").addEventListener("click", () => { document.getElementById("confirm").hidden = true; });
+document.getElementById("yesReset").addEventListener("click", () => {
+  st = { start: null, pausedAt: null, pausedTotal: 0, res: {}, open: {} }; save();
+  document.getElementById("confirm").hidden = true; sheet(); score(); tick();
+});
+document.getElementById("revealAll").addEventListener("click", () => {
+  const all = P.every(p => st.open[p.letter]); P.forEach(p => st.open[p.letter] = !all); save(); sheet();
+  document.getElementById("revealAll").textContent = all ? "Reveal all spoilers" : "Hide all spoilers";
+});
+document.getElementById("sheet").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const L = b.dataset.wrong || b.dataset.ok || b.dataset.undo, r = st.res[L] || (st.res[L] = { wrong: 0, at: null });
+  if (b.dataset.wrong) r.wrong++;
+  if (b.dataset.ok) r.at = Math.max(0, Math.floor(elapsed() / 60000));
+  if (b.dataset.undo) r.at = null;
+  save(); sheet(); score();
+});
+document.getElementById("sheet").addEventListener("toggle", e => { const d = e.target; if (d.dataset && d.dataset.l) { st.open[d.dataset.l] = d.open; save(); } }, true);
+
+function ratio(id, rows) {
+  document.getElementById(id).innerHTML = `<thead><tr><th>Group</th><th>Avg / contest</th><th>Target</th><th>This set</th></tr></thead><tbody>` +
+    rows.map(r => `<tr><td>${esc(r.name)}</td><td>${r.avg.toFixed(2)}</td><td>${r.target}</td><td>${r.got}</td></tr>`).join("") + "</tbody>";
+}
+ratio("tBand", RATIO.bands); ratio("tCat", RATIO.cats);
+sheet(); score(); tick();
+setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
